@@ -1,0 +1,19 @@
+¿Qué es una libreria?
+Una libreria es un conjunto reutilisable de codigo
+
+"*" = mutiplicacion
+"/" = divicion
+"+" = suma
+"-" = resta
+
+¿Qué es un framework?
+Un FrameWork o tambien conocido como marco de trabajo es una estructura que define como debe organizarce y ejecutarce tu app,
+tu escribes el codigo que encaja en las reglas: de entrada que el FrameWork define.
+
+¿Qué es VUE JS?
+VUE JS es un conjunto de carpetas y de subcarpetas donde nos va a decir donde va a ir cada seccion espetando cada estructura 
+que nos da. Se centra en la capa de vista (UI)
+
+FrontEnd: Es lo que se muestra al final de la pagina web (UI).
+BackEnd: Es todo lo que hay por detras de la pagina/app (Logica/Codigo).
+IDE: Entorno de desarrollo personal EJ: VisualStudioCode
