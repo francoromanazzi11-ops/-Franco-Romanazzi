@@ -1,0 +1,32 @@
+14/04/26
+Clase 5:
+
+
+¿Cuáles son las etiquetas semánticas e HTML?
+<HEADER>=Representa el encabezado de una página o sección. 
+  |
+<NAV>=Contiene enlaces de navegación.
+  |
+<SECTION>=Agrupa contenido relacionado dentro de una página.
+  |
+<ARTICLE>=Representa una pieza de contenido independiente.
+  |
+<ASIDE>=Contenido complementario, como barras laterales.
+  |
+<FOOTER>=Representa el pie de página de una sección o documento.
+
+
+PR: PULL REAQUEST (solicitud)
+
+
+GIT= Git es un sistema de control de versiones distribuido.
+GitHub= GitHub es una plataforma en la nube que sirve para alojar proyectos que utilizan Git (repositorios).
+
+
+Repositorio= Es un proyecto donde se guardan los archivos, y cuenta con dos tipos.
+     |
+     |
+Repositorio Local=El repositorio local es una copia local donde se realizan los cambios y se prueban los códigos antes de subirlos.
+     |
+     |
+Repositorio Remoto=El repositorio remoto es la versión que permanece en un servidor de la nube.
