@@ -1,0 +1,10 @@
+7/04/26
+Clase 4:
+
+sketch: Es un boceto de como puede creer uno que va a ser algo antes de crearlo.
+
+Componentes: Los componentes en vue permiten hacer códigos reutilizables y son partes de la pagina web. Esta compuesto por tres partes:
+HTML etiqueta TEMPLATE.
+ESTILOS etiqueta STYLE.
+JavaScript etiqueta SCRIPT.
+
