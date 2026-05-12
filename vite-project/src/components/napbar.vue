@@ -1,149 +1,95 @@
 <template>
-  <div class="layout-container">
-    <!-- HEADER -->
-    <header class="main-header">
-      <div class="header-top">
-  
-        <form class="search-form" @submit.prevent="handleSearch">
-          <input type="text" placeholder="¿Qué estás buscando?" v-model="searchQuery" />
-          <button type="submit" class="search-btn">🔍</button>
-        </form>
+  <header class="main-header">
+    <div class="header-top">
+      <form class="search-form" @submit.prevent="$emit('buscar', searchQuery)">
+        <input 
+          type="text" 
+          placeholder="¿Qué estás buscando?" 
+          v-model="searchQuery" 
+        />
+        <button type="submit" class="search-btn">🔍</button>
+      </form>
 
-  
-        <div class="user-actions">
-          <button class="icon-btn" title="Mi Cuenta">👤</button>
-          <button class="icon-btn menu-hamburger" title="Menú">☰</button>
-        </div>
+      <div class="user-actions">
+        <button class="icon-btn">👤</button>
+        <button class="icon-btn">☰</button>
       </div>
+    </div>
 
-      <nav class="main-nav">
-        <ul>
-          <li><button @click="navigate('inicio')">INICIO</button></li>
-          <li><button @click="navigate('computadoras')">COMPUTADORAS</button></li>
-          <li><button @click="navigate('celulares')">CELULARES</button></li>
-          <li><button @click="navigate('ofertas')">OFERTAS</button></li>
-          <li><button @click="navigate('ayuda')">AYUDA</button></li>
-        </ul>
-      </nav>
-    </header>
-
-
-    <main class="content-spacer">
-      <p style="text-align: center; padding: 40px; color: #666;">
-        Contenido de la página
-      </p>
-    </main>
-
-
-  </div>
+    <nav class="main-nav">
+      <ul>
+        <li><button @click="$emit('cambiar-pagina', 'inicio')">INICIO</button></li>
+        <li><button @click="$emit('cambiar-pagina', 'computadoras')">COMPUTADORAS</button></li>
+        <li><button @click="$emit('cambiar-pagina', 'celulares')">CELULARES</button></li>
+        <li><button @click="$emit('cambiar-pagina', 'ofertas')">OFERTAS</button></li>
+        <li><button @click="$emit('cambiar-pagina', 'ayuda')">AYUDA</button></li>
+      </ul>
+    </nav>
+  </header>
 </template>
 
 <script>
 export default {
-  name: 'MainLayout',
   data() {
-    return {
-      searchQuery: ''
-    };
-  },
-  methods: {
-    handleSearch() {
-      if (this.searchQuery.trim()) {
-        console.log("Buscando:", this.searchQuery);
-      }
-    },
-    navigate(route) {
-      console.log("Navegando a:", route);
-    }
+    return { searchQuery: '' }
   }
 }
 </script>
 
-<style scope>
-
-.layout-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  font-family: sans-serif;
-}
-
-.content-spacer {
-  flex: 1;
-}
-
-
+<style scoped>
 .main-header {
-  width: 100%;
-  border-bottom: 1px solid #ccc;
+  background: white;
+  border-bottom: 1px solid #ddd;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .header-top {
   display: flex;
   align-items: center;
-  justify-content: flex-start; 
-  padding: 15px 25px; 
+  padding: 10px 20px;
   gap: 20px;
 }
 
 .search-form {
-  flex-grow: 1;
+  flex: 1;
   display: flex;
-  max-width: 800px; 
+  max-width: 700px;
 }
 
 .search-form input {
   width: 100%;
-  padding: 12px 15px; 
-  font-size: 1rem;
-  border: 1px solid #aaa;
-  border-radius: 6px 0 0 6px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px 0 0 4px;
   outline: none;
 }
 
-.search-form input:focus {
-  border-color: #007bff;
-}
-
 .search-btn {
-  padding: 0 20px;
-  font-size: 1.2rem;
-  background: #f0f0f0;
-  border: 1px solid #aaa;
+  padding: 0 15px;
+  background: #eee;
+  border: 1px solid #ccc;
   border-left: none;
-  border-radius: 0 6px 6px 0;
+  border-radius: 0 4px 4px 0;
   cursor: pointer;
-  transition: background 0.2s;
-}
-
-.search-btn:hover {
-  background: #e0e0e0;
 }
 
 .user-actions {
   display: flex;
-  gap: 15px;
-  margin-left: auto; 
+  gap: 10px;
 }
 
 .icon-btn {
   background: none;
   border: none;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   cursor: pointer;
-  padding: 5px;
-  border-radius: 50%;
-  transition: background 0.2s;
 }
-
-.icon-btn:hover {
-  background: #f0f0f0;
-}
-
 
 .main-nav {
-  background-color: #f8f8f8;
-  border-top: 1px solid #ddd;
+  background: #fff;
+  border-top: 1px solid #eee;
 }
 
 .main-nav ul {
@@ -151,36 +97,19 @@ export default {
   justify-content: center;
   list-style: none;
   margin: 0;
-  padding: 12px 0;
-}
-
-.main-nav li {
-  margin: 0 15px;
+  padding: 10px;
 }
 
 .main-nav button {
   background: none;
   border: none;
-  font-weight: bold;
-  text-transform: uppercase;
+  font-weight: 600;
+  padding: 5px 15px;
   cursor: pointer;
-  color: #333;
-  font-size: 0.9rem;
+  color: #555;
 }
 
 .main-nav button:hover {
   color: #007bff;
-}
-@media (max-width: 768px) {
-  .header-top {
-    flex-direction: column;
-    gap: 15px;
-  }
-  .search-form {
-    max-width: 100%;
-  }
-  .user-actions {
-    margin-left: 0;
-  }
 }
 </style>
