@@ -1,89 +1,65 @@
-<script setup>
-import { ref } from 'vue'
-import Navbar from './components/napbar.vue'
-import ProductGrid from './components/ProductGrid.vue'
+<template>
+  <div class="app-layout">
+    <Header 
+      @cambiar-categoria="manejarCambioCategoria" 
+      @actualizar-busqueda="textoBusqueda = $event" 
+    />
+    
+    <main class="main-content">
+      <Publicidad v-if="categoriaActual === 'inicio' && !textoBusqueda" />
+      
+      <HubCategorias 
+        v-if="categoriaActual === 'inicio' && !textoBusqueda" 
+        @seleccionar-categoria="manejarCambioCategoria" 
+      />
+      
+      <ProductGrid 
+        :category="categoriaActual" 
+        :search="textoBusqueda" 
+      />
+    </main>
+    
+    <Footer @cambiar-categoria="manejarCambioCategoria" />
+  </div>
+</template>
+
+<script>
+import Header from './components/Header.vue'
 import Publicidad from './components/Publicidad.vue'
+import HubCategorias from './components/HubCategorias.vue'
+import ProductGrid from './components/ProductGrid.vue'
 import Footer from './components/Footer.vue'
 
-const paginaActual = ref('inicio')
-const ayudaActiva = ref(false)
-const textoBusqueda = ref('')
-const footerRef = ref(null)
-
-const navegar = (seccion) => {
-  // Al navegar, reseteamos la búsqueda
-  textoBusqueda.value = '';
-  
-  if (seccion === 'ayuda') {
-    ayudaActiva.value = true;
-    setTimeout(() => {
-      if (footerRef.value) footerRef.value.$el.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
-    setTimeout(() => { ayudaActiva.value = false }, 3000);
-  } else {
-    paginaActual.value = seccion;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-}
-
-const realizarBusqueda = (termino) => {
-  if (termino.trim() !== '') {
-    paginaActual.value = 'busqueda';
-    textoBusqueda.value = termino.toLowerCase();
-  } else {
-    paginaActual.value = 'inicio';
-    textoBusqueda.value = '';
+export default {
+  components: { Header, Publicidad, HubCategorias, ProductGrid, Footer },
+  data() {
+    return {
+      categoriaActual: 'inicio',
+      textoBusqueda: ''
+    }
+  },
+  methods: {
+    manejarCambioCategoria(cat) {
+      this.categoriaActual = cat;
+      this.textoBusqueda = ''; // Resetea el buscador al cambiar de sección
+    }
   }
 }
 </script>
 
-<template>
-  <div id="app" :class="{ 'modo-ayuda': ayudaActiva }">
-    <Navbar @cambiar-pagina="navegar" @buscar="realizarBusqueda" />
-
-    <main class="main-content">
-      <Publicidad v-if="paginaActual === 'inicio' && !textoBusqueda" />
-      
-      <ProductGrid 
-        :category="paginaActual" 
-        :search="textoBusqueda" 
-      />
-    </main>
-
-    <Footer 
-      ref="footerRef" 
-      :expandir="ayudaActiva" 
-      @cambiar-pagina="navegar" 
-    />
-  </div>
-</template>
-
 <style>
-#app {
+/* Estilos globales básicos de reseteo */
+body {
+  margin: 0;
+  background-color: #f8fafc;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+.app-layout {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
-
 .main-content {
-  flex: 1;
-  padding-bottom: 50px;
-  transition: filter 0.5s ease;
-}
-
-.modo-ayuda .main-content, 
-.modo-ayuda .main-header {
-  filter: blur(5px) grayscale(100%);
-  pointer-events: none;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f4f4f4;
+  flex-grow: 1;
 }
 </style>

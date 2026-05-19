@@ -1,35 +1,95 @@
 <template>
-  <footer class="main-footer" :class="{ 'footer-expandido': expandir }">
+  <footer class="main-footer">
     <div class="footer-container">
-      <div class="footer-section">
-        <h3>NOSOTROS</h3>
-        <button @click="$emit('cambiar-pagina', 'nosotros')">Quiénes somos</button>
+      <div class="footer-info">
+        <h3 class="footer-logo">⚡ TechStore</h3>
+        <p>Tu rincón tecnológico con los mejores componentes, smartphones y sistemas de audio del país.</p>
       </div>
-      <div class="footer-section">
-        <h3>SOPORTE</h3>
-        <div class="footer-row">
-          <button @click="$emit('cambiar-pagina', 'ayuda')">Ayuda</button>
-          <button @click="$emit('cambiar-pagina', 'soporte')">Técnico</button>
-        </div>
+      <div class="footer-links">
+        <h4>Navegación</h4>
+        <ul>
+          <li><a href="#" @click.prevent="$emit('cambiar-categoria', 'inicio')">Inicio</a></li>
+          <li><a href="#" @click.prevent="$emit('cambiar-categoria', 'ofertas')">Ofertas Especiales</a></li>
+          <li><a href="#">Términos y Condiciones</a></li>
+        </ul>
       </div>
-      <div class="footer-section">
-        <h3>CONTACTO</h3>
-        <button @click="$emit('cambiar-pagina', 'redes')">Redes Sociales</button>
+      <div class="footer-copy">
+        <p>&copy; 2026 TechStore S.R.L. Todos los derechos reservados.</p>
+        <p class="author-tag">Desarrollado con Vue.js</p>
       </div>
     </div>
-    <div class="footer-bottom">© 2026 Franco Romanazzi</div>
   </footer>
 </template>
 
 <script>
-export default { props: { expandir: Boolean } }
+export default {
+  name: 'Footer'
+}
 </script>
 
 <style scoped>
-.main-footer { background-color: #585757; color: white; padding: 30px 0; transition: all 0.6s ease; }
-.footer-expandido { transform: scale(1.05); padding: 50px 0; background-color: #444; box-shadow: 0 -10px 30px rgba(0,0,0,0.5); }
-.footer-container { display: flex; justify-content: space-around; max-width: 1000px; margin: 0 auto; }
-.footer-section h3 { color: #007bff; font-size: 0.9rem; }
-.footer-section button { background: none; border: none; color: #ccc; cursor: pointer; display: block; margin: 5px 0; }
-.footer-bottom { text-align: center; margin-top: 20px; border-top: 1px solid #666; padding-top: 10px; font-size: 0.8rem; }
+.main-footer {
+  background: #0f172a;
+  color: #94a3b8;
+  padding: 40px 20px 20px 20px;
+  margin-top: 60px;
+  border-top: 4px solid #1e293b;
+  font-family: sans-serif;
+  font-size: 0.85rem;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  text-align: left;
+}
+
+.footer-logo {
+  color: white;
+  margin: 0 0 10px 0;
+  font-size: 1.2rem;
+}
+
+.footer-links h4 {
+  color: white;
+  margin: 0 0 12px 0;
+  font-size: 0.95rem;
+}
+
+.footer-links ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 8px;
+}
+
+.footer-links a {
+  color: #94a3b8;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover {
+  color: #f59e0b;
+}
+
+.footer-copy {
+  grid-column: 1 / -1;
+  border-top: 1px solid #1e293b;
+  padding-top: 20px;
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+}
+.footer-copy p { margin: 0; }
+.author-tag { color: #64748b; }
 </style>
