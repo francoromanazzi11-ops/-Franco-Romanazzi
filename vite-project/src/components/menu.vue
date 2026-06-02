@@ -1,104 +1,180 @@
 <template>
-  <div>
-    <div 
-      class="sidebar-overlay" 
-      :class="{ 'activo': abierto }" 
-      @click="$emit('cerrar')"
-    ></div>
-
-    <div class="sidebar-menu" :class="{ 'abierto': abierto }">
-      <div class="sidebar-header">
-        <h3>Menú de Navegación</h3>
-        <button class="close-btn" @click="$emit('cerrar')">✕</button>
-      </div>
+  <nav class="nav-menu">
+    <div class="menu-inner">
       
-      <ul class="sidebar-links">
-        <li><button @click="seleccionarEnlace('inicio')">🏠 Inicio</button></li>
-        <li><button @click="seleccionarEnlace('computadoras')">💻 Computadoras</button></li>
-        <li><button @click="seleccionarEnlace('celulares')">📱 Celulares</button></li>
-        <li><button @click="seleccionarEnlace('ofertas')">🔥 Ofertas</button></li>
-        <li><button @click="seleccionarEnlace('ayuda')">❓ Ayuda</button></li>
-      </ul>
+      <!-- Bloque Izquierdo: Ubicación y Links rápidos -->
+      <div class="menu-left">
+        <div class="location-badge">
+          <span class="pin-icon">📍</span>
+          <div class="location-text">
+            <span class="loc-label">Enviar a</span>
+            <span class="loc-dest">Capital Federal</span>
+          </div>
+        </div>
+
+        <ul class="nav-links">
+          <li><a href="#" @click.prevent="seleccionarCat('inicio')">Inicio</a></li>
+          <li><a href="#" @click.prevent="seleccionarCat('computadoras')">Computadoras</a></li>
+          <li><a href="#" @click.prevent="seleccionarCat('celulares')">Celulares</a></li>
+          <li><a href="#" @click.prevent="seleccionarCat('audio')">Audio</a></li>
+          <li><a href="#" @click.prevent="seleccionarCat('gaming')">Gaming</a></li>
+          <li><a href="#" @click.prevent="seleccionarCat('ofertas')" class="highlight-link">Ofertas</a></li>
+        </ul>
+      </div>
+
+      <!-- Bloque Derecho: Gestión de cuenta y Carrito -->
+      <div class="menu-right">
+        <ul class="user-links">
+          <li><a href="#">Creá tu cuenta</a></li>
+          <li><a href="#">Ingresá</a></li>
+        </ul>
+        <div class="cart-icon-wrapper">
+          <span class="cart-icon">🛒</span>
+          <span class="cart-badge">0</span>
+        </div>
+      </div>
+
     </div>
-  </div>
+  </nav>
 </template>
 
 <script>
 export default {
-  name: 'MenuLateral',
-  props: {
-    abierto: { type: Boolean, default: false }
-  },
+  name: 'MenuComponent',
   methods: {
-    seleccionarEnlace(seccion) {
-      this.$emit('cambiar-pagina', seccion);
-      this.$emit('cerrar');
+    seleccionarCat(catId) {
+      this.$emit('change-category', catId);
     }
   }
 }
 </script>
 
 <style scoped>
-.sidebar-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.4);
-  z-index: 199;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
+.nav-menu {
+  width: 100%;
+  background-color: #0d223f; /* Azul un toque más claro que el header principal */
+  padding: 8px 0;
+  box-sizing: border-box;
+  border-bottom: 1px solid #0a1b33;
 }
 
-.sidebar-overlay.activo { opacity: 1; pointer-events: auto; }
-
-.sidebar-menu {
-  position: fixed;
-  top: 0;
-  right: -300px;
-  width: 300px;
-  height: 100vh;
-  background-color: white;
-  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
-  z-index: 200;
+.menu-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
   display: flex;
-  flex-direction: column;
-  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
 }
 
-.sidebar-menu.abierto { right: 0; }
-
-.sidebar-header {
+.menu-left {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 20px;
-  border-bottom: 1px solid #eee;
+  gap: 35px;
 }
 
-.sidebar-header h3 { margin: 0; color: #333; font-size: 1.1rem; }
-
-.close-btn { background: none; border: none; font-size: 1.3rem; cursor: pointer; color: #888; }
-
-.sidebar-links { list-style: none; padding: 0; margin: 0; }
-
-.sidebar-links li { border-bottom: 1px solid #f5f5f5; }
-
-.sidebar-links button {
-  width: 100%;
-  background: none;
-  border: none;
-  text-align: left;
-  padding: 16px 24px;
-  font-size: 1rem;
-  color: #444;
+.location-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   cursor: pointer;
 }
 
-.sidebar-links button:hover {
-  background-color: #fcfcfc;
-  color: #007bff;
+.pin-icon {
+  font-size: 1.1rem;
+  color: #ff4757;
+}
+
+.location-text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  line-height: 1.2;
+}
+
+.loc-label {
+  font-size: 0.65rem;
+  color: #a0aec0;
+}
+
+.loc-dest {
+  font-size: 0.75rem;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-links li a {
+  font-size: 0.85rem;
+  color: #cbd5e0;
+  text-decoration: none;
+}
+.nav-links li a:hover {
+  color: #ffffff;
+}
+
+.nav-links li a.highlight-link {
+  color: #2ecc71; /* Verde llamativo para Ofertas */
+  font-weight: 700;
+}
+
+.menu-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user-links {
+  display: flex;
+  gap: 14px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.user-links li a {
+  font-size: 0.8rem;
+  color: #cbd5e0;
+  text-decoration: none;
+}
+.user-links li a:hover {
+  color: #ffffff;
+}
+
+.cart-icon-wrapper {
+  position: relative;
+  cursor: pointer;
+}
+
+.cart-icon {
+  font-size: 1.1rem;
+  color: #ffffff;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background-color: #3483fa;
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: bold;
+  padding: 1px 5px;
+  border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+  .nav-links, .menu-right {
+    display: none;
+  }
 }
 </style>

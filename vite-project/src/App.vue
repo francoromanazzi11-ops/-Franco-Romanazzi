@@ -1,65 +1,133 @@
 <template>
-  <div class="app-layout">
-    <Header 
-      @cambiar-categoria="manejarCambioCategoria" 
-      @actualizar-busqueda="textoBusqueda = $event" 
-    />
-    
+  <div id="app">
+    <!-- Header principal expandido -->
+    <HeaderComponent @execute-search="actualizarBusqueda" @go-home="irAlHome" />
+
+    <!-- Barra de Marcas destacadas expandida -->
+    <MarcasComponent />
+
+    <!-- Sub-Header / Menú expandido -->
+    <MenuComponent @change-category="cambiarCategoria" />
+
+    <!-- Carrusel y Beneficios expandidos de fondo -->
+    <div v-if="categoriaSeleccionada === 'inicio' && !terminoBusqueda" class="hero-section">
+      <PublicidadComponent />
+      <BeneficiosComponent />
+    </div>
+
+    <!-- Hub de Categorías (Centrado pero en contenedor fluido) -->
+    <HubCategorias :currentCategory="categoriaSeleccionada" @change-category="cambiarCategoria" />
+
+    <!-- Grilla de Productos Dinámica -->
     <main class="main-content">
-      <Publicidad v-if="categoriaActual === 'inicio' && !textoBusqueda" />
-      
-      <HubCategorias 
-        v-if="categoriaActual === 'inicio' && !textoBusqueda" 
-        @seleccionar-categoria="manejarCambioCategoria" 
-      />
-      
-      <ProductGrid 
-        :category="categoriaActual" 
-        :search="textoBusqueda" 
-      />
+      <ProductGrid :category="categoriaSeleccionada" :search="terminoBusqueda" />
     </main>
-    
-    <Footer @cambiar-categoria="manejarCambioCategoria" />
+
+    <!-- Pie de página expandido -->
+    <FooterComponent />
   </div>
 </template>
 
 <script>
-import Header from './components/Header.vue'
-import Publicidad from './components/Publicidad.vue'
-import HubCategorias from './components/HubCategorias.vue'
-import ProductGrid from './components/ProductGrid.vue'
-import Footer from './components/Footer.vue'
+import HeaderComponent from './components/Header.vue';
+import MarcasComponent from './components/Marcas.vue';
+import MenuComponent from './components/menu.vue';
+import PublicidadComponent from './components/Publicidad.vue';
+import BeneficiosComponent from './components/Beneficios.vue';
+import HubCategorias from './components/HubCategorias.vue';
+import ProductGrid from './components/ProductGrid.vue';
+import FooterComponent from './components/Footer.vue';
 
 export default {
-  components: { Header, Publicidad, HubCategorias, ProductGrid, Footer },
+  name: 'App',
+  components: {
+    HeaderComponent,
+    MarcasComponent,
+    MenuComponent,
+    PublicidadComponent,
+    BeneficiosComponent,
+    HubCategorias,
+    ProductGrid,
+    FooterComponent
+  },
   data() {
     return {
-      categoriaActual: 'inicio',
-      textoBusqueda: ''
+      categoriaSeleccionada: 'inicio',
+      terminoBusqueda: ''
     }
   },
   methods: {
-    manejarCambioCategoria(cat) {
-      this.categoriaActual = cat;
-      this.textoBusqueda = ''; // Resetea el buscador al cambiar de sección
+    cambiarCategoria(catId) {
+      this.categoriaSeleccionada = catId;
+      this.terminoBusqueda = '';
+      this.hacerScrollAlCatalogo();
+    },
+    actualizarBusqueda(query) {
+      this.terminoBusqueda = query;
+      this.categoriaSeleccionada = '';
+      this.hacerScrollAlCatalogo();
+    },
+    irAlHome() {
+      this.categoriaSeleccionada = 'inicio';
+      this.terminoBusqueda = '';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    },
+    hacerScrollAlCatalogo() {
+      setTimeout(() => {
+        const elementoGrid = document.querySelector('.main-content');
+        if (elementoGrid) {
+          elementoGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 50);
     }
   }
 }
 </script>
 
 <style>
-/* Estilos globales básicos de reseteo */
-body {
+html, body {
   margin: 0;
-  background-color: #f8fafc;
-  font-family: system-ui, -apple-system, sans-serif;
+  padding: 0;
+  width: 100%;
+  background-color: #ededed;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  overflow-x: hidden; /* Clave absoluta para evitar desbordes laterales */
 }
-.app-layout {
+
+#app {
+  width: 100%;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
+
+.hero-section {
+  width: 100%;
+}
+
 .main-content {
-  flex-grow: 1;
+  flex: 1;
+  width: 100%;
+  box-sizing: border-box;
+  padding-bottom: 50px;
+  margin-top: 20px;
+}
+
+a, button {
+  transition: all 0.2s ease;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
 }
 </style>

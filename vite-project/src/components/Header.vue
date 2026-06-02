@@ -1,55 +1,29 @@
 <template>
   <header class="main-header">
-    <div class="header-top">
-      <div class="logo-container" @click="$emit('cambiar-categoria', 'inicio')">
-        <span class="logo-icon">⚡</span>
-        <div class="logo-text-group">
-          <span class="logo-text">TECH<span class="logo-highlight">STORE</span></span>
-          <span class="logo-sub">E-Commerce</span>
+    <div class="header-inner">
+      <!-- Logo e Identidad -->
+      <div class="logo-area" @click="$emit('go-home')">
+        <span class="lightning-icon">⚡</span>
+        <div class="brand-text">
+          <span class="brand-title">TECHSTORE</span>
+          <span class="brand-subtitle">E-COMMERCE</span>
         </div>
       </div>
 
-      <div class="search-form">
+      <!-- Barra de Buscador Global -->
+      <div class="search-container">
         <input 
           type="text" 
-          placeholder="Buscar productos, marcas y más..." 
           v-model="searchQuery" 
-          @input="$emit('actualizar-busqueda', searchQuery)"
+          placeholder="Buscar productos, marcas y más..." 
+          @keyup.enter="buscar"
         />
-        <button class="search-btn">🔍</button>
+        <button class="search-btn" @click="buscar">🔍</button>
       </div>
 
-      <div class="header-banner">
-        <span class="banner-emoji">👑</span> Suscríbete a Tech+ por $2.999
-      </div>
-    </div>
-
-    <div class="header-bottom">
-      <div class="envio-container">
-        <span class="geo-icon">📍</span>
-        <div class="envio-text">
-          <span class="envio-sub">Enviar a</span>
-          <span class="envio-main">Capital Federal</span>
-        </div>
-      </div>
-
-      <nav class="main-nav">
-        <ul>
-          <li><a href="#" @click.prevent="$emit('cambiar-categoria', 'inicio')">Inicio</a></li>
-          <li><a href="#" @click.prevent="$emit('cambiar-categoria', 'computadoras')">Computadoras</a></li>
-          <li><a href="#" @click.prevent="$emit('cambiar-categoria', 'celulares')">Celulares</a></li>
-          <li><a href="#" @click.prevent="$emit('cambiar-categoria', 'audio')">Audio</a></li>
-          <li><a href="#" @click.prevent="$emit('cambiar-categoria', 'componentes')">Componentes</a></li>
-          <li><a href="#" @click.prevent="$emit('cambiar-categoria', 'perifericos')">Gaming</a></li>
-          <li><a href="#" @click.prevent="$emit('cambiar-categoria', 'televisores')">Smart TV</a></li>
-          <li><a href="#" @click.prevent="$emit('cambiar-categoria', 'ofertas')" class="oferta-link">Ofertas</a></li>
-        </ul>
-      </nav>
-
-      <div class="user-menu-actions">
-        <span class="user-nav-btn">Creá tu cuenta</span>
-        <span class="user-nav-btn">Ingresá</span>
-        <span class="cart-nav-btn">🛒 <span class="cart-badge">0</span></span>
+      <!-- Tag de Suscripción Premium -->
+      <div class="premium-tag">
+        <span>👑 Suscribite a Tech+ por $2.999</span>
       </div>
     </div>
   </header>
@@ -57,10 +31,15 @@
 
 <script>
 export default {
-  name: 'Header',
+  name: 'HeaderComponent',
   data() {
     return {
       searchQuery: ''
+    }
+  },
+  methods: {
+    buscar() {
+      this.$emit('execute-search', this.searchQuery);
     }
   }
 }
@@ -69,45 +48,112 @@ export default {
 <style scoped>
 .main-header {
   width: 100%;
-  background: #0f172a;
-  border-bottom: 3px solid #1e293b;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
-  font-family: sans-serif;
+  background-color: #0b1a30; /* El azul oscuro de tu captura */
+  padding: 14px 0;
+  box-sizing: border-box;
+  border-bottom: 1px solid #071120;
 }
 
-.header-top { display: flex; align-items: center; justify-content: space-between; padding: 12px 40px 6px 40px; gap: 30px; }
-.logo-container { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-.logo-icon { font-size: 1.8rem; }
-.logo-text-group { display: flex; flex-direction: column; text-align: left; }
-.logo-text { font-weight: 800; font-size: 1.3rem; color: white; }
-.logo-highlight { color: #3b82f6; }
-.logo-sub { font-size: 0.7rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; }
+.header-inner {
+  max-width: 1200px; /* Ancho máximo de la zona segura de contenido */
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+  box-sizing: border-box;
+}
 
-.search-form { flex-grow: 1; display: flex; max-width: 550px; border-radius: 6px; overflow: hidden; background: white; }
-.search-form input { width: 100%; padding: 10px 15px; border: none; outline: none; font-size: 0.9rem; }
-.search-btn { padding: 0 18px; background: #f1f5f9; border: none; cursor: pointer; color: #334155; }
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
 
-.header-banner { font-size: 0.8rem; font-weight: 600; color: #94a3b8; background: #1e293b; padding: 8px 14px; border-radius: 20px; border: 1px solid #334155; }
+.lightning-icon {
+  font-size: 1.8rem;
+  color: #ff9f43;
+}
 
-.header-bottom { display: flex; align-items: center; justify-content: space-between; padding: 6px 40px 10px 40px; background: #0f172a; }
-.envio-container { display: flex; align-items: center; gap: 6px; text-align: left; }
-.geo-icon { font-size: 1.1rem; color: #94a3b8; }
-.envio-text { display: flex; flex-direction: column; }
-.envio-sub { font-size: 0.65rem; color: #64748b; }
-.envio-main { font-size: 0.8rem; color: #94a3b8; font-weight: 500; }
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
 
-.main-nav ul { display: flex; list-style: none; padding: 0; margin: 0; gap: 18px; }
-.main-nav a { text-decoration: none; color: #94a3b8; font-size: 0.85rem; font-weight: 500; transition: color 0.2s; }
-.main-nav a:hover { color: white; }
-.main-nav a.oferta-link { color: #22c55e; font-weight: bold; }
+.brand-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 1px;
+}
 
-.user-menu-actions { display: flex; align-items: center; gap: 15px; font-size: 0.85rem; color: #94a3b8; }
-.user-nav-btn { cursor: pointer; }
-.user-nav-btn:hover { color: white; }
-.cart-nav-btn { position: relative; cursor: pointer; font-size: 1.05rem; }
-.cart-badge { position: absolute; top: -6px; right: -8px; background: #3b82f6; color: white; font-size: 0.65rem; font-weight: bold; border-radius: 50%; width: 15px; height: 15px; display: flex; align-items: center; justify-content: center; }
+.brand-subtitle {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #3483fa;
+  letter-spacing: 2px;
+}
+
+.search-container {
+  flex: 1;
+  max-width: 550px;
+  display: flex;
+  background-color: #ffffff;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.search-container input {
+  flex: 1;
+  border: none;
+  padding: 10px 15px;
+  font-size: 0.9rem;
+  outline: none;
+  color: #333;
+}
+
+.search-btn {
+  background: none;
+  border: none;
+  padding: 0 15px;
+  cursor: pointer;
+  background-color: #f5f5f5;
+  border-left: 1px solid #e6e6e6;
+  font-size: 0.9rem;
+}
+.search-btn:hover {
+  background-color: #e8e8e8;
+}
+
+.premium-tag {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 8px 16px;
+  border-radius: 20px;
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+.premium-tag:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+@media (max-width: 768px) {
+  .header-inner {
+    flex-direction: column;
+    gap: 15px;
+  }
+  .premium-tag {
+    display: none;
+  }
+  .search-container {
+    width: 100%;
+  }
+}
 </style>

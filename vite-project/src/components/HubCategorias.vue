@@ -1,26 +1,35 @@
 <template>
-  <section class="hub-container">
-    <div class="hub-header">
-      <h2 class="hub-title">Explorá nuestras categorías principales</h2>
-      <button class="explorar-btn" @click="irAOfertas">
-        Ver todas las ofertas <span class="arrow-icon">❯</span>
-      </button>
-    </div>
-    
-    <div class="hub-grid">
-      <div 
-        v-for="(cat, idx) in categorias" 
-        :key="idx" 
-        class="hub-card" 
-        @click="$emit('seleccionar-categoria', cat.id)"
-      >
-        <div class="hub-image-wrapper">
-          <img :src="cat.imgUrl" :alt="cat.nombre" class="hub-category-img" />
-        </div>
-        <h3>{{ cat.nombre }}</h3>
-        <p>{{ cat.items }} productos activos</p>
-        <span class="hub-link-text">Ir al catálogo ➔</span>
+  <section class="hub-section">
+    <div class="hub-container">
+      
+      <!-- Encabezado del Hub alineado con el layout global -->
+      <div class="hub-header">
+        <h2 class="hub-title">Explorá nuestras categorías principales</h2>
+        <a href="#" class="hub-link" @click.prevent="seleccionarCat('ofertas')">
+          Ver todas las ofertas <span class="arrow">›</span>
+        </a>
       </div>
+
+      <!-- Grilla horizontal de categorías optimizada -->
+      <div class="categories-grid">
+        <div 
+          v-for="cat in categorias" 
+          :key="cat.id" 
+          class="category-card"
+          :class="{ active: currentCategory === cat.id }"
+          @click="seleccionarCat(cat.id)"
+        >
+          <div class="image-circle">
+            <img :src="cat.img" :alt="cat.title" />
+          </div>
+          <div class="card-content">
+            <h3 class="category-name">{{ cat.title }}</h3>
+            <p class="products-count">{{ cat.count }} productos activos</p>
+            <span class="catalog-action">Ir al catálogo →</span>
+          </div>
+        </div>
+      </div>
+
     </div>
   </section>
 </template>
@@ -28,125 +37,183 @@
 <script>
 export default {
   name: 'HubCategorias',
+  props: {
+    currentCategory: {
+      type: String,
+      default: 'inicio'
+    }
+  },
   data() {
     return {
       categorias: [
-        { id: 'computadoras', nombre: 'Computadoras', items: '124', imgUrl: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?q=80&w=300&auto=format&fit=crop' },
-        { id: 'celulares', nombre: 'Celulares & Smartphones', items: '89', imgUrl: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=300&auto=format&fit=crop' },
-        { id: 'audio', nombre: 'Audio & Sonido Pro', items: '45', imgUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=300&auto=format&fit=crop' },
-        { id: 'consolas', nombre: 'Consolas & Gaming', items: '62', imgUrl: 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?q=80&w=300&auto=format&fit=crop' },
-        { id: 'ofertas', nombre: 'Liquidación & Ofertas', items: '31', imgUrl: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=300&auto=format&fit=crop' }
+        { id: 'computadoras', title: 'Computadoras', count: 124, img: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?q=80&w=150' },
+        { id: 'celulares', title: 'Celulares & Smartphones', count: 89, img: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=150' },
+        { id: 'audio', title: 'Audio & Sonido Pro', count: 45, img: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=150' },
+        { id: 'gaming', title: 'Consolas & Gaming', count: 62, img: 'https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?q=80&w=150' }
       ]
     }
   },
   methods: {
-    irAOfertas() {
-      alert("Redireccionando al panel completo de liquidación.");
-      this.$emit('seleccionar-categoria', 'ofertas');
+    seleccionarCat(catId) {
+      this.$emit('change-category', catId);
     }
   }
 }
 </script>
 
 <style scoped>
-.hub-container {
-  max-width: 1200px;
-  margin: 40px auto 10px auto;
-  padding: 0 20px;
+/* Contenedor padre de borde a borde */
+.hub-section {
+  width: 100%;
+  padding: 40px 0 20px 0;
+  box-sizing: border-box;
 }
 
+/* Zona segura de contenido centrada (1200px igual al Header y Banner) */
+.hub-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+/* Fila de título y link de ofertas */
 .hub-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
+  align-items: flex-end;
+  margin-bottom: 20px;
 }
 
 .hub-title {
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   font-weight: 600;
-  color: #222;
+  color: #333333;
   margin: 0;
+  text-align: left;
 }
 
-.explorar-btn {
-  background: none;
-  border: none;
-  color: #007bff;
-  font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
+.hub-link {
+  font-size: 0.95rem;
+  color: #3483fa;
+  text-decoration: none;
+  font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
+}
+.hub-link:hover {
+  color: #2968c8;
+}
+.hub-link .arrow {
+  font-size: 1.2rem;
+  line-height: 0;
+  position: relative;
+  top: -1px;
 }
 
-.explorar-btn:hover { text-decoration: underline; }
-.arrow-icon { font-size: 1.1rem; }
-
-.hub-grid {
+/* ¡El cambio clave! Grid horizontal de 4 columnas iguales en vez de vertical */
+.categories-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(4, 1fr); /* 4 columnas que ocupan el mismo espacio */
   gap: 20px;
 }
 
-.hub-card {
-  background: white;
-  border: 1px solid #e5e7eb;
+/* Tarjeta estilizada con dimensiones controladas */
+.category-card {
+  background-color: #ffffff;
   border-radius: 8px;
-  padding: 25px 20px;
-  text-align: center;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  padding: 24px 15px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
+  border: 1px solid #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
-.hub-card:hover {
+.category-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 24px -10px rgba(0,0,0,0.15);
-  border-color: #007bff;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
 }
 
-.hub-image-wrapper {
+.category-card.active {
+  border-color: #3483fa;
+  box-shadow: 0 0 0 1px #3483fa;
+}
+
+/* Círculo de la foto achicado para mantener la elegancia */
+.image-circle {
   width: 90px;
   height: 90px;
   border-radius: 50%;
+  background-color: #f7f7f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
-  margin-bottom: 15px;
-  border: 2px solid #f3f4f6;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  margin-bottom: 16px;
+  border: 1px solid #eaeaea;
 }
 
-.hub-category-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
+.image-circle img {
+  width: 75%;
+  height: 75%;
+  object-fit: contain;
 }
 
-.hub-card:hover .hub-category-img {
-  transform: scale(1.1);
+.card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
 }
 
-.hub-card h3 {
-  margin: 0;
-  font-size: 1.05rem;
-  color: #1f2937;
+.category-name {
+  font-size: 1rem;
   font-weight: 600;
+  color: #333333;
+  margin: 0 0 6px 0;
+  line-height: 1.3;
 }
 
-.hub-card p {
-  margin: 6px 0 15px 0;
+.products-count {
   font-size: 0.8rem;
-  color: #9ca3af;
+  color: #999999;
+  margin: 0 0 16px 0;
 }
 
-.hub-link-text {
+.catalog-action {
   font-size: 0.85rem;
-  color: #007bff;
+  color: #3483fa;
   font-weight: 600;
-  margin-top: auto;
+  margin-top: auto; /* Empuja el link al fondo de la tarjeta si los títulos varían en largo */
+}
+.category-card:hover .catalog-action {
+  color: #2968c8;
+}
+
+/* Adaptación para pantallas medianas o celulares */
+@media (max-width: 992px) {
+  .categories-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 filas de 2 columnas en tablets */
+  }
+  .hub-title {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .categories-grid {
+    grid-template-columns: 1fr; /* 1 sola columna en celulares chicos */
+  }
+  .hub-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
 }
 </style>
