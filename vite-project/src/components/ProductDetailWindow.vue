@@ -1,59 +1,48 @@
 <template>
-  <transition name="modal-fade">
-    <div v-if="isOpen" class="modal-overlay" @click.self="cerrar">
-      <div class="modal-window">
-        <button class="close-btn" @click="cerrar">✕</button>
+  <div class="modal-overlay" v-if="isOpen" @click.self="$emit('close')">
+    <div class="detail-box">
+      <button class="close-btn" @click="$emit('close')">✕</button>
 
-        <div class="modal-body" v-if="product">
-          <div class="gallery-side">
-            <div class="thumbnails">
-              <div class="thumb-box active">
-                <img :src="product.img" :alt="product.title" />
-              </div>
-              <div class="thumb-box" v-for="n in 2" :key="n"></div>
+      <div class="detail-columns" v-if="product">
+        <div class="image-column">
+          <div class="main-img-wrapper">
+            <img :src="product.img" :alt="product.title" />
+          </div>
+        </div>
+
+        <div class="info-column">
+          <p class="product-condition">Nuevo | +100 vendidos</p>
+          <h2 class="product-title">{{ product.title }}</h2>
+          <p class="product-vendor">Vendido por <span class="vendor-highlight">{{ product.vendor }}</span></p>
+
+          <div class="price-section">
+            <div class="price-row">
+              <span class="current-price">${{ product.price.toLocaleString('es-AR') }}</span>
+              <span v-if="product.discount" class="discount-badge">{{ product.discount }}% OFF</span>
             </div>
-            <div class="main-image-container">
-              <img :src="product.img" :alt="product.title" class="main-img" />
+            <p class="payment-info">en 12x de ${{ Math.round((product.price * 1.15) / 12).toLocaleString('es-AR') }} pagando con Mercado Pago</p>
+          </div>
+
+          <div class="shipping-benefit-box">
+            <span class="truck-icon">⚡</span>
+            <div class="shipping-text">
+              <p class="green-text">Envío gratis a todo el país con FULL</p>
+              <p class="sub-text">Llega mañana de forma segura a tu domicilio</p>
             </div>
           </div>
 
-          <div class="info-side">
-            <span class="product-status">Nuevo | +25 vendidos</span>
-            <h1 class="product-title">{{ product.title }}</h1>
-            
-            <div class="rating-box">
-              <span class="stars">★★★★★</span>
-              <span class="rating-text">4.8 (186 opiniones)</span>
-            </div>
-
-            <div class="price-section">
-              <span v-if="product.discount" class="old-price">
-                ${{ Math.round(product.price * 1.2).toLocaleString('es-AR') }}
-              </span>
-              <div class="current-price-row">
-                <span class="price-value">${{ product.price.toLocaleString('es-AR') }}</span>
-                <span v-if="product.discount" class="discount-badge">{{ product.discount }}% OFF</span>
-              </div>
-              <p class="installments">Mismo precio en 6 cuotas de ${{ Math.round(product.price / 6).toLocaleString('es-AR') }}</p>
-            </div>
-
-            <div class="shipping-info">
-              <p class="shipping-green">
-                <span class="icon">⚡</span> Llega gratis mañana <span class="subtext">por ser tu primera compra</span>
-              </p>
-              <p class="stock-status">Stock disponible</p>
-              <p class="vendor-text">Vendido por: <span class="vendor-name">{{ product.vendor }}</span></p>
-            </div>
-
-            <div class="actions-box">
-              <button class="btn-primary" @click="comprar">Comprar ahora</button>
-              <button class="btn-secondary">Agregar al carrito</button>
-            </div>
+          <div class="actions-section">
+            <button class="buy-now-btn" @click="comprarDirecto">
+              Comprar ahora
+            </button>
+            <button class="add-to-cart-btn" @click="agregarAlCarrito">
+              Agregar al carrito
+            </button>
           </div>
         </div>
       </div>
     </div>
-  </transition>
+  </div>
 </template>
 
 <script>
@@ -70,11 +59,18 @@ export default {
     }
   },
   methods: {
-    cerrar() {
-      this.$emit('close');
+    agregarAlCarrito() {
+      if (this.product) {
+        // Emitimos el evento que va a viajar al grid y luego a App.vue
+        this.$emit('add-to-cart', this.product);
+        this.$emit('close');
+      }
     },
-    comprar() {
-      alert(`Procediendo a la compra de: ${this.product.title}`);
+    comprarDirecto() {
+      if (this.product) {
+        alert(`Procediendo a la compra rápida de: ${this.product.title}`);
+        this.$emit('close');
+      }
     }
   }
 }
@@ -87,122 +83,104 @@ export default {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
-  backdrop-filter: blur(2px);
+  z-index: 4000;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-.modal-window {
+.detail-box {
   background-color: #ffffff;
-  width: 90%;
-  max-width: 1000px;
-  max-height: 90vh;
+  width: 100%;
+  max-width: 860px;
   border-radius: 8px;
   position: relative;
-  overflow-y: auto;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
   padding: 30px;
   box-sizing: border-box;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 .close-btn {
   position: absolute;
   top: 15px;
-  right: 20px;
+  right: 15px;
   background: none;
   border: none;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   color: #666;
   cursor: pointer;
   z-index: 10;
 }
-.close-btn:hover { color: #000; }
 
-.modal-body {
+.detail-columns {
   display: flex;
-  gap: 40px;
+  gap: 30px;
 }
 
-/* GALERÍA IZQUIERDA */
-.gallery-side {
+.image-column {
   flex: 1.2;
   display: flex;
-  gap: 15px;
+  align-items: center;
+  justify-content: center;
 }
 
-.thumbnails {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.thumb-box {
-  width: 50px;
-  height: 50px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  cursor: pointer;
-  overflow: hidden;
-}
-.thumb-box.active, .thumb-box:hover {
-  border-color: #3483fa;
-  box-shadow: 0 0 0 1px #3483fa;
-}
-.thumb-box img {
+.main-img-wrapper {
   width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.main-image-container {
-  flex: 1;
+  max-height: 380px;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 1px solid #f0f0f0;
   border-radius: 4px;
-  padding: 10px;
-  background: #fff;
+  padding: 15px;
 }
 
-.main-img {
+.main-img-wrapper img {
   max-width: 100%;
-  max-height: 380px;
+  max-height: 350px;
   object-fit: contain;
 }
 
-/* INFORMACIÓN DERECHA */
-.info-side {
+.info-column {
   flex: 1;
-  text-align: left;
   display: flex;
   flex-direction: column;
+  text-align: left;
 }
 
-.product-status {
-  font-size: 0.8rem;
+.product-condition {
+  font-size: 0.75rem;
   color: #666;
+  margin: 0 0 5px 0;
 }
 
 .product-title {
   font-size: 1.4rem;
   font-weight: 600;
   color: #333;
-  margin: 8px 0;
-  line-height: 1.2;
+  margin: 0 0 8px 0;
+  line-height: 1.3;
 }
 
-.rating-box {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 15px;
+.product-vendor {
+  font-size: 0.82rem;
+  color: #666;
+  margin: 0 0 20px 0;
 }
-.stars { color: #3483fa; font-size: 0.9rem; }
-.rating-text { font-size: 0.8rem; color: #666; }
+
+.vendor-highlight {
+  color: #3483fa;
+  font-weight: 500;
+}
 
 .price-section {
   border-top: 1px solid #f0f0f0;
@@ -210,92 +188,100 @@ export default {
   margin-bottom: 20px;
 }
 
-.old-price {
-  font-size: 0.9rem;
-  color: #999;
-  text-decoration: line-through;
-}
-
-.current-price-row {
+.price-row {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 2px;
 }
 
-.price-value {
-  font-size: 2.2rem;
-  font-weight: 300;
+.current-price {
+  font-size: 2rem;
   color: #333;
+  font-weight: 300;
 }
 
 .discount-badge {
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   color: #00a650;
   font-weight: 600;
 }
 
-.installments {
-  font-size: 0.85rem;
-  color: #00a650;
+.payment-info {
+  font-size: 0.82rem;
+  color: #666;
   margin: 4px 0 0 0;
 }
 
-.shipping-info {
+.shipping-benefit-box {
   background-color: #f6f6f6;
   border-radius: 6px;
-  padding: 14px;
-  margin-bottom: 20px;
+  padding: 12px 15px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 25px;
 }
 
-.shipping-green {
-  font-size: 0.9rem;
+.truck-icon {
+  font-size: 1.3rem;
+  color: #00a650;
+}
+
+.shipping-text p {
+  margin: 0;
+}
+
+.shipping-text .green-text {
+  font-size: 0.88rem;
   color: #00a650;
   font-weight: 600;
-  margin: 0 0 4px 0;
 }
-.shipping-green .subtext { color: #666; font-weight: 400; }
 
-.stock-status { font-size: 0.9rem; font-weight: 600; color: #333; margin: 8px 0 4px 0; }
-.vendor-text { font-size: 0.8rem; color: #666; margin: 0; }
-.vendor-name { color: #3483fa; font-weight: 500; }
+.shipping-text .sub-text {
+  font-size: 0.78rem;
+  color: #666;
+  margin-top: 2px;
+}
 
-.actions-box {
+.actions-section {
+  margin-top: auto;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-top: auto;
 }
 
-.btn-primary, .btn-secondary {
+.buy-now-btn {
   width: 100%;
+  background-color: #3483fa;
+  color: #ffffff;
+  border: none;
   padding: 14px;
   font-size: 0.95rem;
   font-weight: 600;
   border-radius: 6px;
   cursor: pointer;
-  border: none;
+  transition: background-color 0.2s;
 }
 
-.btn-primary {
+.buy-now-btn:hover {
+  background-color: #1f6cd7;
+}
+
+.add-to-cart-btn {
+  width: 100%;
+  background-color: rgba(65, 137, 230, 0.15);
+  color: #3483fa;
+  border: none;
+  padding: 14px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.add-to-cart-btn:hover {
   background-color: #3483fa;
   color: #ffffff;
-}
-.btn-primary:hover { background-color: #2968c8; }
-
-.btn-secondary {
-  background-color: rgba(65, 137, 245, 0.15);
-  color: #3483fa;
-}
-.btn-secondary:hover { background-color: rgba(65, 137, 245, 0.25); }
-
-/* Animaciones */
-.modal-fade-enter-active, .modal-fade-leave-active { transition: opacity 0.3s; }
-.modal-fade-enter, .modal-fade-leave-to { opacity: 0; }
-
-@media (max-width: 768px) {
-  .modal-body { flex-direction: column; }
-  .gallery-side { flex-direction: column-reverse; }
-  .thumbnails { flex-direction: row; }
 }
 </style>

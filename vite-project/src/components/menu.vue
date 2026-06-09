@@ -1,37 +1,31 @@
 <template>
-  <nav class="nav-menu">
-    <div class="menu-inner">
+  <nav class="sub-header-nav">
+    <div class="nav-container">
       
-      <!-- Bloque Izquierdo: Ubicación y Links rápidos -->
-      <div class="menu-left">
-        <div class="location-badge">
+      <div class="left-nav-meta">
+        <div class="geo-picker">
           <span class="pin-icon">📍</span>
-          <div class="location-text">
-            <span class="loc-label">Enviar a</span>
-            <span class="loc-dest">Capital Federal</span>
+          <div class="geo-text">
+            <span>Enviar a</span>
+            <span class="main-city">Capital Federal</span>
           </div>
         </div>
-
-        <ul class="nav-links">
-          <li><a href="#" @click.prevent="seleccionarCat('inicio')">Inicio</a></li>
-          <li><a href="#" @click.prevent="seleccionarCat('computadoras')">Computadoras</a></li>
-          <li><a href="#" @click.prevent="seleccionarCat('celulares')">Celulares</a></li>
-          <li><a href="#" @click.prevent="seleccionarCat('audio')">Audio</a></li>
-          <li><a href="#" @click.prevent="seleccionarCat('gaming')">Gaming</a></li>
-          <li><a href="#" @click.prevent="seleccionarCat('ofertas')" class="highlight-link">Ofertas</a></li>
-        </ul>
       </div>
 
-      <!-- Bloque Derecho: Gestión de cuenta y Carrito -->
-      <div class="menu-right">
-        <ul class="user-links">
-          <li><a href="#">Creá tu cuenta</a></li>
-          <li><a href="#">Ingresá</a></li>
-        </ul>
-        <div class="cart-icon-wrapper">
-          <span class="cart-icon">🛒</span>
-          <span class="cart-badge">0</span>
-        </div>
+      <ul class="categories-list">
+        <li><a href="#" @click.prevent="$emit('change-category', 'inicio')">Inicio</a></li>
+        <li><a href="#" @click.prevent="$emit('change-category', 'computadoras')">Computadoras</a></li>
+        <li><a href="#" @click.prevent="$emit('change-category', 'celulares')">Celulares</a></li>
+        <li><a href="#" @click.prevent="$emit('change-category', 'audio')">Audio</a></li>
+        <li><a href="#" @click.prevent="$emit('change-category', 'componentes')">Componentes</a></li>
+        <li><a href="#" @click.prevent="$emit('change-category', 'gaming')">Gaming</a></li>
+        <li><a href="#" @click.prevent="$emit('change-category', 'smart-tv')">Smart TV</a></li>
+        <li><a href="#" @click.prevent="$emit('change-category', 'ofertas')" class="highlight-offers">Ofertas</a></li>
+      </ul>
+
+      <div class="right-user-meta">
+        <a href="#" class="user-link">Creá tu cuenta</a>
+        <a href="#" class="user-link">Ingresá</a>
       </div>
 
     </div>
@@ -40,41 +34,34 @@
 
 <script>
 export default {
-  name: 'MenuComponent',
-  methods: {
-    seleccionarCat(catId) {
-      this.$emit('change-category', catId);
-    }
-  }
+  name: 'MenuComponent'
 }
 </script>
 
 <style scoped>
-.nav-menu {
+.sub-header-nav {
   width: 100%;
-  background-color: #0d223f; /* Azul un toque más claro que el header principal */
-  padding: 8px 0;
+  background-color: #0c2340;
+  padding: 8px 0 12px 0;
   box-sizing: border-box;
-  border-bottom: 1px solid #0a1b33;
 }
 
-.menu-inner {
+.nav-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   box-sizing: border-box;
 }
 
-.menu-left {
+.left-nav-meta {
   display: flex;
   align-items: center;
-  gap: 35px;
 }
 
-.location-badge {
+.geo-picker {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -83,98 +70,65 @@ export default {
 
 .pin-icon {
   font-size: 1.1rem;
-  color: #ff4757;
 }
 
-.location-text {
+.geo-text {
   display: flex;
   flex-direction: column;
   text-align: left;
-  line-height: 1.2;
 }
 
-.loc-label {
+.geo-text span:first-child {
   font-size: 0.65rem;
-  color: #a0aec0;
+  color: rgba(255, 255, 255, 0.6);
 }
 
-.loc-dest {
-  font-size: 0.75rem;
+.geo-text .main-city {
+  font-size: 0.78rem;
   color: #ffffff;
-  font-weight: 600;
+  font-weight: 500;
 }
 
-.nav-links {
+.categories-list {
   display: flex;
-  align-items: center;
-  gap: 18px;
   list-style: none;
-  padding: 0;
   margin: 0;
+  padding: 0;
+  gap: 18px;
 }
 
-.nav-links li a {
-  font-size: 0.85rem;
-  color: #cbd5e0;
+.categories-list a {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
+  transition: color 0.15s;
+  font-weight: 400;
 }
-.nav-links li a:hover {
+
+.categories-list a:hover {
   color: #ffffff;
 }
 
-.nav-links li a.highlight-link {
-  color: #2ecc71; /* Verde llamativo para Ofertas */
+.categories-list .highlight-offers {
+  color: #00a650;
   font-weight: 700;
 }
+.categories-list .highlight-offers:hover {
+  color: #00cc62;
+}
 
-.menu-right {
+.right-user-meta {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 15px;
 }
 
-.user-links {
-  display: flex;
-  gap: 14px;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.user-links li a {
-  font-size: 0.8rem;
-  color: #cbd5e0;
+.user-link {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
 }
-.user-links li a:hover {
+.user-link:hover {
   color: #ffffff;
-}
-
-.cart-icon-wrapper {
-  position: relative;
-  cursor: pointer;
-}
-
-.cart-icon {
-  font-size: 1.1rem;
-  color: #ffffff;
-}
-
-.cart-badge {
-  position: absolute;
-  top: -6px;
-  right: -8px;
-  background-color: #3483fa;
-  color: #fff;
-  font-size: 0.6rem;
-  font-weight: bold;
-  padding: 1px 5px;
-  border-radius: 10px;
-}
-
-@media (max-width: 768px) {
-  .nav-links, .menu-right {
-    display: none;
-  }
 }
 </style>

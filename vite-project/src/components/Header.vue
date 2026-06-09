@@ -1,45 +1,77 @@
 <template>
   <header class="main-header">
-    <div class="header-inner">
-      <!-- Logo e Identidad -->
+    <div class="header-container">
+      
       <div class="logo-area" @click="$emit('go-home')">
-        <span class="lightning-icon">⚡</span>
-        <div class="brand-text">
-          <span class="brand-title">TECHSTORE</span>
-          <span class="brand-subtitle">E-COMMERCE</span>
+        <div class="logo-icon">⚡</div>
+        <div class="logo-text">
+          <h1>TECHSTORE</h1>
+          <span>E-COMMERCE</span>
         </div>
       </div>
 
-      <!-- Barra de Buscador Global -->
-      <div class="search-container">
-        <input 
-          type="text" 
-          v-model="searchQuery" 
-          placeholder="Buscar productos, marcas y más..." 
-          @keyup.enter="buscar"
-        />
-        <button class="search-btn" @click="buscar">🔍</button>
+      <div class="search-area">
+        <form @submit.prevent="enviarBusqueda" class="search-form">
+          <input 
+            type="text" 
+            v-model="query" 
+            placeholder="Buscar productos, marcas y más..." 
+            class="search-input"
+          />
+          <button type="submit" class="search-button">🔍</button>
+        </form>
       </div>
 
-      <!-- Tag de Suscripción Premium -->
-      <div class="premium-tag">
-        <span>👑 Suscribite a Tech+ por $2.999</span>
+      <div class="actions-area">
+        <div class="promo-badge">
+          👑 Suscribite a Tech+ por $2.999
+        </div>
+        
+        <div class="cart-hub" @click="mostrarModalCarrito = true">
+          <span class="cart-icon">🛒</span>
+          <span class="cart-badge">{{ totalItems }}</span>
+        </div>
       </div>
+
     </div>
+
+    <CartSidebar 
+      :isOpen="mostrarModalCarrito" 
+      :items="cartItems" 
+      @close="mostrarModalCarrito = false" 
+    />
   </header>
 </template>
 
 <script>
+// Importamos el componente independiente
+import CartSidebar from './CartSidebar.vue';
+
 export default {
   name: 'HeaderComponent',
+  components: {
+    CartSidebar
+  },
+  props: {
+    cartItems: {
+      type: Array,
+      default: () => []
+    }
+  },
   data() {
     return {
-      searchQuery: ''
+      query: '',
+      mostrarModalCarrito: false
+    }
+  },
+  computed: {
+    totalItems() {
+      return this.cartItems.reduce((total, item) => total + item.cantidad, 0);
     }
   },
   methods: {
-    buscar() {
-      this.$emit('execute-search', this.searchQuery);
+    enviarBusqueda() {
+      this.$emit('execute-search', this.query);
     }
   }
 }
@@ -48,20 +80,20 @@ export default {
 <style scoped>
 .main-header {
   width: 100%;
-  background-color: #0b1a30; /* El azul oscuro de tu captura */
-  padding: 14px 0;
+  background-color: #0c2340;
+  padding: 12px 0;
   box-sizing: border-box;
-  border-bottom: 1px solid #071120;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  position: relative;
 }
 
-.header-inner {
-  max-width: 1200px; /* Ancho máximo de la zona segura de contenido */
+.header-container {
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 30px;
   box-sizing: border-box;
 }
 
@@ -70,90 +102,25 @@ export default {
   align-items: center;
   gap: 10px;
   cursor: pointer;
-  user-select: none;
 }
 
-.lightning-icon {
-  font-size: 1.8rem;
-  color: #ff9f43;
-}
+.logo-icon { font-size: 1.8rem; }
+.logo-text h1 { font-size: 1.3rem; color: #ffffff; margin: 0; font-weight: 800; letter-spacing: 0.5px; }
+.logo-text span { font-size: 0.65rem; color: #3483fa; font-weight: 700; display: block; letter-spacing: 1px; }
 
-.brand-text {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-}
+.search-area { flex: 1; max-width: 550px; margin: 0 30px; }
+.search-form { display: flex; background-color: #ffffff; border-radius: 4px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+.search-input { flex: 1; border: none; padding: 10px 15px; font-size: 0.88rem; outline: none; color: #333333; }
+.search-button { background: none; border: none; padding: 0 15px; cursor: pointer; font-size: 0.95rem; border-left: 1px solid #e6e6e6; }
 
-.brand-title {
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: #ffffff;
-  letter-spacing: 1px;
-}
+.actions-area { display: flex; align-items: center; gap: 25px; }
+.promo-badge { color: #ffffff; font-size: 0.8rem; background-color: rgba(255,255,255,0.08); padding: 6px 12px; border-radius: 20px; font-weight: 500; }
 
-.brand-subtitle {
-  font-size: 0.65rem;
-  font-weight: 600;
-  color: #3483fa;
-  letter-spacing: 2px;
-}
-
-.search-container {
-  flex: 1;
-  max-width: 550px;
-  display: flex;
-  background-color: #ffffff;
-  border-radius: 4px;
-  overflow: hidden;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-}
-
-.search-container input {
-  flex: 1;
-  border: none;
-  padding: 10px 15px;
-  font-size: 0.9rem;
-  outline: none;
-  color: #333;
-}
-
-.search-btn {
-  background: none;
-  border: none;
-  padding: 0 15px;
-  cursor: pointer;
-  background-color: #f5f5f5;
-  border-left: 1px solid #e6e6e6;
-  font-size: 0.9rem;
-}
-.search-btn:hover {
-  background-color: #e8e8e8;
-}
-
-.premium-tag {
-  background-color: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 8px 16px;
-  border-radius: 20px;
-  color: #ffffff;
-  font-size: 0.8rem;
-  font-weight: 500;
-  cursor: pointer;
-}
-.premium-tag:hover {
-  background-color: rgba(255, 255, 255, 0.15);
-}
-
-@media (max-width: 768px) {
-  .header-inner {
-    flex-direction: column;
-    gap: 15px;
-  }
-  .premium-tag {
-    display: none;
-  }
-  .search-container {
-    width: 100%;
-  }
+.cart-hub { position: relative; cursor: pointer; display: flex; align-items: center; }
+.cart-icon { font-size: 1.5rem; }
+.cart-badge {
+  position: absolute; top: -6px; right: -10px; background-color: #3483fa; color: #ffffff;
+  font-size: 0.72rem; font-weight: 700; border-radius: 10px; padding: 2px 6px; min-width: 12px;
+  text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 </style>

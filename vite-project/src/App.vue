@@ -1,36 +1,34 @@
 <template>
   <div id="app">
-    <!-- Header principal expandido -->
-    <HeaderComponent @execute-search="actualizarBusqueda" @go-home="irAlHome" />
+    <HeaderComponent 
+      :cart-count="totalItemsCarrito" 
+      @execute-search="actualizarBusqueda" 
+      @go-home="irAlHome" 
+    />
 
-    <!-- Barra de Marcas destacadas expandida -->
-    <MarcasComponent />
-
-    <!-- Sub-Header / Menú expandido -->
     <MenuComponent @change-category="cambiarCategoria" />
 
-    <!-- Carrusel y Beneficios expandidos de fondo -->
     <div v-if="categoriaSeleccionada === 'inicio' && !terminoBusqueda" class="hero-section">
       <PublicidadComponent />
       <BeneficiosComponent />
     </div>
 
-    <!-- Hub de Categorías (Centrado pero en contenedor fluido) -->
     <HubCategorias :currentCategory="categoriaSeleccionada" @change-category="cambiarCategoria" />
 
-    <!-- Grilla de Productos Dinámica -->
     <main class="main-content">
-      <ProductGrid :category="categoriaSeleccionada" :search="terminoBusqueda" />
+      <ProductGrid 
+        :category="categoriaSeleccionada" 
+        :search="terminoBusqueda" 
+        @add-to-cart="agregarAlCarrito"
+      />
     </main>
 
-    <!-- Pie de página expandido -->
     <FooterComponent />
   </div>
 </template>
 
 <script>
 import HeaderComponent from './components/Header.vue';
-import MarcasComponent from './components/Marcas.vue';
 import MenuComponent from './components/menu.vue';
 import PublicidadComponent from './components/Publicidad.vue';
 import BeneficiosComponent from './components/Beneficios.vue';
@@ -42,7 +40,6 @@ export default {
   name: 'App',
   components: {
     HeaderComponent,
-    MarcasComponent,
     MenuComponent,
     PublicidadComponent,
     BeneficiosComponent,
@@ -53,18 +50,42 @@ export default {
   data() {
     return {
       categoriaSeleccionada: 'inicio',
-      terminoBusqueda: ''
+      terminoBusqueda: '',
+      // Array donde se guardan los productos agregados
+      carrito: []
+    }
+  },
+  computed: {
+    // Suma dinámicamente las cantidades de todos los productos en el carrito
+    totalItemsCarrito() {
+      return this.carrito.reduce((total, item) => total + item.cantidad, 0);
     }
   },
   methods: {
+    agregarAlCarrito(producto) {
+      // Verificamos si el producto ya estaba en el carrito
+      const itemExiste = this.carrito.find(item => item.id === producto.id);
+      
+      if (itemExiste) {
+        // Si ya existe, incrementamos su cantidad
+        itemExiste.cantidad++;
+      } else {
+        // Si es nuevo, lo agregamos esparciendo sus propiedades junto a cantidad: 1
+        this.carrito.push({
+          ...producto,
+          cantidad: 1
+        });
+      }
+      console.log('Contenido del carrito actual:', this.carrito);
+    },
     cambiarCategoria(catId) {
       this.categoriaSeleccionada = catId;
-      this.terminoBusqueda = '';
+      this.terminoBusqueda = ''; 
       this.hacerScrollAlCatalogo();
     },
     actualizarBusqueda(query) {
       this.terminoBusqueda = query;
-      this.categoriaSeleccionada = '';
+      this.categoriaSeleccionada = ''; 
       this.hacerScrollAlCatalogo();
     },
     irAlHome() {
@@ -94,7 +115,7 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
-  overflow-x: hidden; /* Clave absoluta para evitar desbordes laterales */
+  overflow-x: hidden;
 }
 
 #app {
@@ -114,20 +135,5 @@ html, body {
   box-sizing: border-box;
   padding-bottom: 50px;
   margin-top: 20px;
-}
-
-a, button {
-  transition: all 0.2s ease;
-}
-
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
 }
 </style>
