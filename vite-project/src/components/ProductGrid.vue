@@ -3,7 +3,7 @@
     <div class="grid-container">
       <h3 class="section-title">{{ tituloSeccion }}</h3>
       
-      <div class="products-layout" v-if="productosFiltrados.length > 0">
+      <transition-group name="grid-fade" tag="div" class="products-layout" v-if="productosFiltrados.length > 0">
         <div 
           v-for="prod in productosFiltrados" 
           :key="prod.id" 
@@ -26,7 +26,7 @@
             <p class="card-shipping">⚡ Envío gratis FULL</p>
           </div>
         </div>
-      </div>
+      </transition-group>
 
       <div class="empty-state" v-else>
         <p>No encontramos productos que coincidan con tu selección.</p>
@@ -34,10 +34,10 @@
     </div>
 
     <ProductDetailWindow 
-      :isOpen="modalAbierto" 
-      :product="productoSeleccionado" 
-      @close="cerrarDetalle" 
-      @add-to-cart="reenviarAlPadre" 
+      :isOpen="mostrarDetalle"
+      :product="productoSeleccionado"
+      @close="mostrarDetalle = false"
+      @add-to-cart="reenviarAlPadre"
     />
   </div>
 </template>
@@ -62,61 +62,47 @@ export default {
   },
   data() {
     return {
-      modalAbierto: false,
+      mostrarDetalle: false,
       productoSeleccionado: null,
-      todosLosProductos: [
-        { id: 1, category: 'computadoras', title: 'Notebook ASUS Vivobook 15 OLED AMD Ryzen 7', price: 849000, discount: 15, vendor: 'MEGA HARDWARE', img: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?q=80&w=400' },
-        { id: 6, category: 'computadoras', title: 'MacBook Air 13 M2 8GB 256GB SSD Liquid Retina', price: 1850000, discount: null, vendor: 'APPLE OFFICIAL', img: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=400' },
-        { id: 7, category: 'computadoras', title: 'Notebook Lenovo IdeaPad Slim 3 Intel Core i5', price: 620000, discount: 10, vendor: 'MUNDO DIGITAL', img: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?q=80&w=400' },
-        { id: 8, category: 'computadoras', title: 'PC Armada Intel i7 16GB RAM SSD 1TB Rtx 4060', price: 1250000, discount: 5, vendor: 'MEGA HARDWARE', img: 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?q=80&w=400' },
-        { id: 2, category: 'celulares', title: 'ZTE Blade A56 Pro Gray Cargador+Auri+Funda De Regalo', price: 223196, discount: 25, vendor: 'MUNDO DIGITAL', img: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=400' },
-        { id: 5, category: 'celulares', title: 'Motorola Edge 40 Neo 128GB Negro Absoluto Libre', price: 460000, discount: null, vendor: 'GIGA COMPUTACIÓN', img: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?q=80&w=400' },
-        { id: 9, category: 'celulares', title: 'iPhone 15 Pro Max 256GB Titanium Natural Libre', price: 2450000, discount: null, vendor: 'APPLE OFFICIAL', img: 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?q=80&w=400' },
-        { id: 10, category: 'celulares', title: 'Samsung Galaxy S24 Ultra 512GB Titanium Black', price: 1980000, discount: 12, vendor: 'MUNDO DIGITAL', img: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?q=80&w=400' },
-        { id: 3, category: 'audio', title: 'Auriculares Sony WH-1000XM4 Noise Cancelling ANC', price: 399000, discount: 20, vendor: 'MEGA HARDWARE', img: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=400' },
-        { id: 11, category: 'audio', title: 'Parlante Portátil JBL Flip 6 Bluetooth Impermeable', price: 185000, discount: null, vendor: 'MUNDO DIGITAL', img: 'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?q=80&w=400' },
-        { id: 12, category: 'audio', title: 'Auriculares In-Ear Apple AirPods Pro 2da Generación', price: 420000, discount: 8, vendor: 'APPLE OFFICIAL', img: 'https://images.unsplash.com/photo-1588444837495-c6cfeb53f32d?q=80&w=400' },
-        { id: 13, category: 'audio', title: 'Home Theater Soundbar Samsung T450 200W Subwoofer', price: 310000, discount: 18, vendor: 'GIGA COMPUTACIÓN', img: 'https://images.unsplash.com/photo-1545454675-3531b543be5d?q=80&w=400' },
-        { id: 4, category: 'gaming', title: 'Teclado Mecánico Giga RGB Switch Red Pro Layout', price: 74500, discount: 10, vendor: 'GIGA COMPUTACIÓN', img: 'https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?q=80&w=400' },
-        { id: 14, category: 'gaming', title: 'Consola PlayStation 5 Slim 1TB con Joystick DualSense', price: 1150000, discount: null, vendor: 'MEGA HARDWARE', img: 'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?q=80&w=400' },
-        { id: 15, category: 'gaming', title: 'Mouse Gamer Logitech G502 Hero 25K Alta Precisión', price: 68000, discount: 30, vendor: 'GIGA COMPUTACIÓN', img: 'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?q=80&w=400' },
-        { id: 16, category: 'gaming', title: 'Monitor Gamer Samsung Odyssey G4 24" IPS 240Hz 1ms', price: 495000, discount: 15, vendor: 'MEGA HARDWARE', img: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?q=80&w=400' }
+      productos: [
+        { id: 1, category: 'computadoras', vendor: 'LOGITECH CO', title: 'Teclado Mecánico RGB Logitech G Pro X Teclas Azules Switch Clicky', price: 145999, discount: 15, img: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?q=80&w=400' },
+        { id: 2, category: 'celulares', vendor: 'SAMSUNG CORP', title: 'Samsung Galaxy S24 Ultra 512GB Titanium Gray con Inteligencia Artificial', price: 2149999, discount: 10, img: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?q=80&w=400' },
+        { id: 3, category: 'audio', vendor: 'SONY STORE', title: 'Auriculares Inalámbricos Sony WH-1000XM5 Con Cancelación de Ruido', price: 549999, discount: null, img: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=400' },
+        { id: 4, category: 'componentes', vendor: 'ASUS OFFICIAL', title: 'Tarjeta de Video ASUS ROG Strix GeForce RTX 4070 Ti SUPER O16G', price: 1689000, discount: 5, img: 'https://images.unsplash.com/photo-1591488320449-011701bb6704?q=80&w=400' },
+        { id: 5, category: 'gaming', vendor: 'RAZER ARG', title: 'Mouse Gaming Inalámbrico Razer DeathAdder V3 Pro Ultra-liviano 63g', price: 189999, discount: 20, img: 'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?q=80&w=400' },
+        { id: 6, category: 'smart-tv', vendor: 'LG FACTORY', title: 'Smart TV LG OLED evo C3 65 pulgadas 4K UHD Procesador Alpha 9 Gen6', price: 3299999, discount: 12, img: 'https://images.unsplash.com/photo-1593305841991-05c297ba4575?q=80&w=400' }
       ]
     }
   },
   computed: {
     tituloSeccion() {
-      if (this.search) return `Resultados para "${this.search}"`;
-      if (this.category === 'inicio') return 'Inspirado en tus favoritos';
-      if (this.category === 'ofertas') return '🔥 Grandes Ofertas y Descuentos';
-      return `Catálogo de ${this.category.charAt(0).toUpperCase() + this.category.slice(1)}`;
+      if (this.search) return `Resultados para: "${this.search}"`;
+      if (this.category === 'inicio') return 'Productos destacados para vos';
+      if (this.category === 'ofertas') return '🔥 Ofertas imperdibles del día';
+      return `Catálogo de ${this.category}`;
     },
     productosFiltrados() {
-      let lista = this.todosLosProductos;
-      if (this.search) {
-        return lista.filter(p => p.title.toLowerCase().includes(this.search.toLowerCase()));
+      let lista = this.productos;
+      if (this.category !== 'inicio' && this.category !== 'ofertas' && !this.search) {
+        lista = lista.filter(p => p.category === this.category);
       }
       if (this.category === 'ofertas') {
-        return lista.filter(p => p.discount !== null && p.discount > 0);
+        lista = lista.filter(p => p.discount !== null);
       }
-      if (this.category !== 'inicio' && this.category !== '') {
-        return lista.filter(p => p.category === this.category);
+      if (this.search) {
+        const query = this.search.toLowerCase();
+        lista = lista.filter(p => p.title.toLowerCase().includes(query) || p.vendor.toLowerCase().includes(query));
       }
-      return lista.slice(0, 8);
+      return lista;
     }
   },
   methods: {
-    abrirDetalle(producto) {
-      this.productoSeleccionado = producto;
-      this.modalAbierto = true;
+    abrirDetalle(prod) {
+      this.productoSeleccionado = prod;
+      this.mostrarDetalle = true;
     },
-    cerrarDetalle() {
-      this.modalAbierto = false;
-      this.productoSeleccionado = null;
-    },
-    reenviarAlPadre(producto) {
-      // Dispara el evento exacto que tu App.vue original está escuchando
-      this.$emit('add-to-cart', producto);
+    reenviarAlPadre(prod) {
+      this.$emit('add-to-cart', prod);
     }
   }
 }
@@ -125,45 +111,43 @@ export default {
 <style scoped>
 .grid-section {
   width: 100%;
-  box-sizing: border-box;
+  margin-top: 30px;
 }
 
 .grid-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
+  width: 100%;
   text-align: left;
-  box-sizing: border-box;
 }
 
 .section-title {
-  font-size: 1.5rem;
-  font-weight: 400;
+  font-size: 1.6rem;
   color: #333333;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
+  font-weight: 400;
 }
 
 .products-layout {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 20px;
+  width: 100%;
 }
 
 .product-card {
   background-color: #ffffff;
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
-  border: 1px solid #ededed;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  height: 390px;
-  transition: transform 0.2s cubic-bezier(0.215, 0.610, 0.355, 1), box-shadow 0.2s;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
 }
 
+/* Efecto hover suave y elástico en las tarjetas */
 .product-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  transform: translateY(-6px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
 }
 
 .card-image-wrapper {
@@ -218,7 +202,6 @@ export default {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: auto;
   margin-bottom: 8px;
 }
 
@@ -229,28 +212,36 @@ export default {
 }
 
 .card-discount {
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   color: #00a650;
   font-weight: 600;
-  background-color: rgba(0, 166, 80, 0.1);
-  padding: 2px 6px;
-  border-radius: 4px;
 }
 
 .card-shipping {
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   color: #00a650;
   font-weight: 600;
-  margin: 0;
+  margin: auto 0 0 0;
 }
 
 .empty-state {
+  background: white;
+  padding: 40px;
+  border-radius: 8px;
   text-align: center;
-  padding: 80px 20px;
-  background: #fff;
-  border-radius: 6px;
-  border: 1px solid #ededed;
   color: #666;
-  font-size: 1.1rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+/* Animación fade up secuencial para los elementos de la grilla */
+.grid-fade-enter-active {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.grid-fade-enter-from {
+  opacity: 0;
+  transform: translateY(30px);
+}
+.grid-fade-move {
+  transition: transform 0.4s ease;
 }
 </style>

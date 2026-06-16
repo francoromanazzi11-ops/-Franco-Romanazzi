@@ -1,47 +1,51 @@
 <template>
-  <div class="modal-overlay" v-if="isOpen" @click.self="$emit('close')">
-    <div class="detail-box">
-      <button class="close-btn" @click="$emit('close')">✕</button>
+  <div class="modal-root">
+    <transition name="fade">
+      <div class="modal-overlay" v-if="isOpen" @click.self="$emit('close')"></div>
+    </transition>
 
-      <div class="detail-columns" v-if="product">
-        <div class="image-column">
-          <div class="main-img-wrapper">
-            <img :src="product.img" :alt="product.title" />
-          </div>
-        </div>
+    <transition name="zoom">
+      <div class="detail-box" v-if="isOpen">
+        <button class="close-btn" @click="$emit('close')">✕</button>
 
-        <div class="info-column">
-          <p class="product-condition">Nuevo | +100 vendidos</p>
-          <h2 class="product-title">{{ product.title }}</h2>
-          <p class="product-vendor">Vendido por <span class="vendor-highlight">{{ product.vendor }}</span></p>
-
-          <div class="price-section">
-            <div class="price-row">
-              <span class="current-price">${{ product.price.toLocaleString('es-AR') }}</span>
-              <span v-if="product.discount" class="discount-badge">{{ product.discount }}% OFF</span>
-            </div>
-            <p class="payment-info">en 12x de ${{ Math.round((product.price * 1.15) / 12).toLocaleString('es-AR') }} pagando con Mercado Pago</p>
-          </div>
-
-          <div class="shipping-benefit-box">
-            <span class="truck-icon">⚡</span>
-            <div class="shipping-text">
-              <p class="green-text">Envío gratis a todo el país con FULL</p>
-              <p class="sub-text">Llega mañana de forma segura a tu domicilio</p>
+        <div class="detail-columns" v-if="product">
+          <div class="image-column">
+            <div class="main-img-wrapper">
+              <img :src="product.img" :alt="product.title" class="product-image" />
             </div>
           </div>
 
-          <div class="actions-section">
-            <button class="buy-now-btn" @click="comprarDirecto">
-              Comprar ahora
-            </button>
-            <button class="add-to-cart-btn" @click="agregarAlCarrito">
-              Agregar al carrito
-            </button>
+          <div class="info-column">
+            <p class="product-condition">Nuevo | +100 vendidos</p>
+            <h2 class="product-title">{{ product.title }}</h2>
+            <p class="product-vendor">Vendido por <span class="vendor-highlight">{{ product.vendor }}</span></p>
+
+            <div class="price-section">
+              <div class="price-row">
+                <span class="current-price">${{ product.price.toLocaleString('es-AR') }}</span>
+                <span v-if="product.discount" class="discount-badge">{{ product.discount }}% OFF</span>
+              </div>
+              <p class="payment-info">en 12x de ${{ Math.round((product.price * 1.15) / 12).toLocaleString('es-AR') }} pagando con Mercado Pago</p>
+            </div>
+
+            <div class="shipping-benefit-box">
+              <span class="truck-icon">⚡</span>
+              <div class="shipping-text">
+                <p class="green-text">Envío gratis FULL</p>
+                <p class="sub-text">Te llega mañana de forma express</p>
+              </div>
+            </div>
+
+            <div class="actions-wrapper">
+              <button class="action-btn buy-now-btn">Comprar ahora</button>
+              <button class="action-btn add-to-cart-btn" @click="$emit('add-to-cart', product)">
+                Agregar al carrito
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </transition>
   </div>
 </template>
 
@@ -57,75 +61,66 @@ export default {
       type: Object,
       default: null
     }
-  },
-  methods: {
-    agregarAlCarrito() {
-      if (this.product) {
-        // Emitimos el evento que va a viajar al grid y luego a App.vue
-        this.$emit('add-to-cart', this.product);
-        this.$emit('close');
-      }
-    },
-    comprarDirecto() {
-      if (this.product) {
-        alert(`Procediendo a la compra rápida de: ${this.product.title}`);
-        this.$emit('close');
-      }
-    }
   }
 }
 </script>
 
 <style scoped>
+.modal-root {
+  position: relative;
+  z-index: 6000;
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 4000;
-  padding: 20px;
-  box-sizing: border-box;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(3px);
 }
 
 .detail-box {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   background-color: #ffffff;
-  width: 100%;
+  width: 90%;
   max-width: 860px;
-  border-radius: 8px;
-  position: relative;
+  max-height: 90vh;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
   padding: 30px;
   box-sizing: border-box;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-  animation: fadeIn 0.2s ease-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+  overflow-y: auto;
 }
 
 .close-btn {
   position: absolute;
-  top: 15px;
-  right: 15px;
+  top: 20px;
+  right: 20px;
   background: none;
   border: none;
-  font-size: 1.2rem;
-  color: #666;
+  font-size: 1.3rem;
+  color: #666666;
   cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
   z-index: 10;
+}
+.close-btn:hover {
+  transform: rotate(90deg);
+  color: #333333;
 }
 
 .detail-columns {
   display: flex;
-  gap: 30px;
+  gap: 40px;
+  margin-top: 10px;
 }
 
+/* Columna de Imagen */
 .image-column {
   flex: 1.2;
   display: flex;
@@ -135,45 +130,53 @@ export default {
 
 .main-img-wrapper {
   width: 100%;
-  max-height: 380px;
+  height: 380px;
+  border: 1px solid #ededed;
+  border-radius: 8px;
+  padding: 20px;
+  box-sizing: border-box;
+  background: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #f0f0f0;
-  border-radius: 4px;
-  padding: 15px;
+  overflow: hidden;
 }
 
-.main-img-wrapper img {
+.product-image {
   max-width: 100%;
-  max-height: 350px;
+  max-height: 100%;
   object-fit: contain;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.main-img-wrapper:hover .product-image {
+  transform: scale(1.05);
 }
 
+/* Columna de Información */
 .info-column {
   flex: 1;
+  text-align: left;
   display: flex;
   flex-direction: column;
-  text-align: left;
 }
 
 .product-condition {
-  font-size: 0.75rem;
-  color: #666;
-  margin: 0 0 5px 0;
+  font-size: 0.78rem;
+  color: #666666;
+  margin: 0 0 8px 0;
 }
 
 .product-title {
   font-size: 1.4rem;
-  font-weight: 600;
-  color: #333;
+  color: #333333;
   margin: 0 0 8px 0;
+  font-weight: 600;
   line-height: 1.3;
 }
 
 .product-vendor {
-  font-size: 0.82rem;
-  color: #666;
+  font-size: 0.85rem;
+  color: #666666;
   margin: 0 0 20px 0;
 }
 
@@ -182,8 +185,9 @@ export default {
   font-weight: 500;
 }
 
+/* Sección de Precios */
 .price-section {
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid #eee;
   padding-top: 15px;
   margin-bottom: 20px;
 }
@@ -195,31 +199,32 @@ export default {
 }
 
 .current-price {
-  font-size: 2rem;
-  color: #333;
+  font-size: 2.2rem;
+  color: #333333;
   font-weight: 300;
 }
 
 .discount-badge {
-  font-size: 0.88rem;
+  font-size: 0.95rem;
   color: #00a650;
   font-weight: 600;
 }
 
 .payment-info {
   font-size: 0.82rem;
-  color: #666;
-  margin: 4px 0 0 0;
+  color: #666666;
+  margin: 6px 0 0 0;
 }
 
+/* Beneficios */
 .shipping-benefit-box {
   background-color: #f6f6f6;
-  border-radius: 6px;
-  padding: 12px 15px;
+  border-radius: 8px;
+  padding: 14px 16px;
   display: flex;
   gap: 12px;
   align-items: flex-start;
-  margin-bottom: 25px;
+  margin-bottom: 30px;
 }
 
 .truck-icon {
@@ -239,49 +244,95 @@ export default {
 
 .shipping-text .sub-text {
   font-size: 0.78rem;
-  color: #666;
+  color: #666666;
   margin-top: 2px;
 }
 
-.actions-section {
-  margin-top: auto;
+/* Contenedor de Botones Rediseñados */
+.actions-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
+  margin-top: auto; /* Empuja los botones al fondo de la columna */
 }
 
-.buy-now-btn {
+.action-btn {
   width: 100%;
-  background-color: #3483fa;
-  color: #ffffff;
-  border: none;
   padding: 14px;
   font-size: 0.95rem;
   font-weight: 600;
   border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  border: none;
+  transition: background-color 0.2s ease, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-sizing: border-box;
+}
+
+.action-btn:hover {
+  transform: translateY(-2px);
+}
+
+.action-btn:active {
+  transform: translateY(0);
+}
+
+/* Botón Comprar Ahora (Azul Sólido Estilo ML) */
+.buy-now-btn {
+  background-color: #3483fa;
+  color: #ffffff;
 }
 
 .buy-now-btn:hover {
-  background-color: #1f6cd7;
+  background-color: #2968c8;
 }
 
+/* Botón Agregar al Carrito (Azul Claro / Transparente) */
 .add-to-cart-btn {
-  width: 100%;
-  background-color: rgba(65, 137, 230, 0.15);
+  background-color: rgba(65, 137, 245, 0.15);
   color: #3483fa;
-  border: none;
-  padding: 14px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
 }
 
 .add-to-cart-btn:hover {
-  background-color: #3483fa;
-  color: #ffffff;
+  background-color: rgba(65, 137, 245, 0.25);
+}
+
+/* ==========================================================================
+   ANIMACIONES DE ENTRADA Y SALIDA
+   ========================================================================== */
+
+/* Fondo oscuro (Fade) */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+
+/* Caja del modal (Zoom In / Out Elástico) */
+.zoom-enter-active {
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.zoom-leave-active {
+  transition: all 0.25s cubic-bezier(0.4, 0, 1, 1);
+}
+/* Reutilizamos el translate original para que no se desfase de la pantalla */
+.zoom-enter-from {
+  opacity: 0;
+  transform: translate(-50%, -40%) scale(0.85);
+}
+.zoom-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.9);
+}
+
+/* Responsive simple para pantallas chicas */
+@media (max-width: 768px) {
+  .detail-columns {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .main-img-wrapper {
+    height: 250px;
+  }
 }
 </style>

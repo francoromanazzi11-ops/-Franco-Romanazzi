@@ -1,9 +1,12 @@
 <template>
   <div id="app">
     <HeaderComponent 
-      :cart-count="totalItemsCarrito" 
+      :cart-items="carrito" 
       @execute-search="actualizarBusqueda" 
       @go-home="irAlHome" 
+      @increase-qty="incrementarCantidad"
+      @decrease-qty="decrementarCantidad"
+      @execute-checkout="procesarCompra"
     />
 
     <MenuComponent @change-category="cambiarCategoria" />
@@ -51,32 +54,34 @@ export default {
     return {
       categoriaSeleccionada: 'inicio',
       terminoBusqueda: '',
-      // Array donde se guardan los productos agregados
-      carrito: []
-    }
-  },
-  computed: {
-    // Suma dinámicamente las cantidades de todos los productos en el carrito
-    totalItemsCarrito() {
-      return this.carrito.reduce((total, item) => total + item.cantidad, 0);
+      carrito: [] 
     }
   },
   methods: {
     agregarAlCarrito(producto) {
-      // Verificamos si el producto ya estaba en el carrito
       const itemExiste = this.carrito.find(item => item.id === producto.id);
-      
       if (itemExiste) {
-        // Si ya existe, incrementamos su cantidad
         itemExiste.cantidad++;
       } else {
-        // Si es nuevo, lo agregamos esparciendo sus propiedades junto a cantidad: 1
-        this.carrito.push({
-          ...producto,
-          cantidad: 1
-        });
+        this.carrito.push({ ...producto, cantidad: 1 });
       }
-      console.log('Contenido del carrito actual:', this.carrito);
+    },
+    incrementarCantidad(id) {
+      const producto = this.carrito.find(item => item.id === id);
+      if (producto) producto.cantidad++;
+    },
+    decrementarCantidad(id) {
+      const index = this.carrito.findIndex(item => item.id === id);
+      if (index !== -1) {
+        if (this.carrito[index].cantidad > 1) {
+          this.carrito[index].cantidad--;
+        } else {
+          this.carrito.splice(index, 1); // Si baja de 1, se remueve
+        }
+      }
+    },
+    procesarCompra() {
+      alert("¡Redireccionando a la pasarela de pago para completar tu compra!");
     },
     cambiarCategoria(catId) {
       this.categoriaSeleccionada = catId;
@@ -96,9 +101,7 @@ export default {
     hacerScrollAlCatalogo() {
       setTimeout(() => {
         const elementoGrid = document.querySelector('.main-content');
-        if (elementoGrid) {
-          elementoGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+        if (elementoGrid) elementoGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 50);
     }
   }
@@ -106,34 +109,7 @@ export default {
 </script>
 
 <style>
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  background-color: #ededed;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-#app {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-.hero-section {
-  width: 100%;
-}
-
-.main-content {
-  flex: 1;
-  width: 100%;
-  box-sizing: border-box;
-  padding-bottom: 50px;
-  margin-top: 20px;
-}
+html, body { margin: 0; padding: 0; width: 100%; background-color: #ededed; font-family: sans-serif; }
+#app { display: flex; flex-direction: column; min-height: 100vh; }
+.main-content { flex: 1; max-width: 1200px; width: 100%; margin: 0 auto; padding: 20px; box-sizing: border-box; }
 </style>
